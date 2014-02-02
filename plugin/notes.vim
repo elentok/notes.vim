@@ -1,3 +1,11 @@
+if !exists("g:notes_open_command")
+  let g:notes_open_command = "open"
+endif
+
+if !exists("g:notes_browse_command")
+  let g:notes_browse_command = "open"
+endif
+
 function! Notes_ToggleComplete()
   let line = getline('.')
   if line =~ "DONE"
@@ -24,9 +32,9 @@ function! Notes_ToggleCancel()
   endif
 endfunc
 
-function! Notes_FoldMethod(lnum)
+function! Notes_FoldExpr(lnum)
   let line=getline(a:lnum)
-  let level = strlen(matchstr(line, '\v#+'))
+  let level = strlen(matchstr(line, '\v^#+'))
   if level > 0
     return ">" . level
   else
@@ -35,5 +43,33 @@ function! Notes_FoldMethod(lnum)
 endfunc
 
 function! Notes_ShowTodos()
-  exec "!"
+  vimgrep '\v(^#|TODO)' %
+  copen
+endfunc
+
+func! Notes_NavigateToUrl()
+  let url = Notes_GetUrlInLine()
+  if url != ''
+    call system(g:notes_browse_command . ' "' . url . '"')
+  endif
+endfunc
+
+func! Notes_Copy()
+  let url = Notes_GetUrlInLine()
+  if url != ''
+    let @*= url
+  else
+    let @*= getline('.')
+  endif
+endfunc
+
+func! Notes_GetUrlInLine()
+  let url = matchstr(getline('.'), '\vhttps?[^ )\]]+')
+  if url == ''
+    let url = matchstr(getline('.'), '\v\<(.+)\>')
+    if url != ''
+      let url = 'http://' . strpart(url, 1, strlen(url) - 2)
+    endif
+  endif
+  return url
 endfunc
