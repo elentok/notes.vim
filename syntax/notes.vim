@@ -12,6 +12,7 @@ hi def link notesTask Statement
 hi def link notesCompleteTask Comment
 hi def link notesContext Question
 hi def link notesLine Function
+hi def link notesCommand Type
 hi def link notesLink helpHyperTextJump
 
 syn match notesTask "TODO.*" contains=notesContext,notesLink
@@ -20,6 +21,7 @@ syn match notesContext "@[^ ]*"
 syn match notesLine "^----*"
 syn match notesLink "\vhttps?:[^ ]+"
 syn match notesLink "\v\<[^\>]+\>"
+syn match notesCommand "\v`[^\>]+`"
 
 syn match notesHeader3 "^###.*$"
 syn match notesHeader2 "^##.*$"

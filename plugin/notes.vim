@@ -6,6 +6,10 @@ if !exists("g:notes_browse_command")
   let g:notes_browse_command = "open"
 endif
 
+if !exists("g:notes_execute_command")
+  let g:notes_execute_command = 'tmux new-window "{command}; zsh"'
+endif
+
 function! Notes_ToggleComplete()
   let line = getline('.')
   if line =~ "DONE"
@@ -47,10 +51,30 @@ function! Notes_ShowTodos()
   copen
 endfunc
 
+func! Notes_ExecuteLine()
+  if Notes_ExecuteCommand() == 0
+    call Notes_NavigateToUrl()
+  endif
+endfunc
+
+func! Notes_ExecuteCommand()
+  let cmd = Notes_GetCommandInLine()
+  if cmd != ''
+    let cmd = substitute(g:notes_execute_command, "{command}", cmd, "")
+    call system(cmd)
+    return 1
+  else
+    return 0
+  end
+endfunc
+
 func! Notes_NavigateToUrl()
   let url = Notes_GetUrlInLine()
   if url != ''
     call system(g:notes_browse_command . ' "' . url . '"')
+    return 1
+  else
+    return 0
   endif
 endfunc
 
@@ -63,13 +87,23 @@ func! Notes_Copy()
   endif
 endfunc
 
+func! Notes_GetCommandInLine()
+  let cmd = matchstr(getline('.'), '\v`(.+)`')
+  if cmd != ''
+    let cmd = strpart(cmd, 1, strlen(cmd) - 2)
+  end
+  return cmd
+endfunc
+
 func! Notes_GetUrlInLine()
-  let url = matchstr(getline('.'), '\vhttps?[^ )\]]+')
-  if url == ''
-    let url = matchstr(getline('.'), '\v\<(.+)\>')
-    if url != ''
-      let url = 'http://' . strpart(url, 1, strlen(url) - 2)
+  let url = matchstr(getline('.'), '\v\<(.+)\>')
+  if url != ''
+    let url = strpart(url, 1, strlen(url) - 2)
+    if ! (url =~ '://')
+      let url = 'http://' . url
     endif
+  else
+    let url = matchstr(getline('.'), '\vhttps?[^ )\]]+')
   endif
   return url
 endfunc
