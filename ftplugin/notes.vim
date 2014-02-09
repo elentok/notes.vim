@@ -18,4 +18,4 @@ nnoremap <buffer> Ω :call Notes_Copy()<cr>
 
 " when pressing enter within a task it creates another task
 setlocal comments+=n:TODO
-setlocal foldexpr=Notes_FoldExpr(v:lnum) foldmethod=expr
+setlocal foldexpr=Notes_FoldExpr(v:lnum) foldtext=Notes_FoldText(v:foldstart) foldmethod=expr

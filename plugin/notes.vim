@@ -10,6 +10,11 @@ if !exists("g:notes_execute_command")
   let g:notes_execute_command = 'tmux new-window "{command}; zsh"'
 endif
 
+if !exists("g:notes_header_fold_length")
+  let g:notes_header_fold_length = 80
+endif
+
+
 function! Notes_ToggleComplete()
   let line = getline('.')
   if line =~ "DONE"
@@ -37,8 +42,16 @@ function! Notes_ToggleCancel()
 endfunc
 
 function! Notes_FoldExpr(lnum)
-  let line=getline(a:lnum)
-  let level = strlen(matchstr(line, '\v^#+'))
+  let line = getline(a:lnum)
+  let expr = Notes_HeadersFoldExpr(a:lnum, line)
+  if expr == '='
+    let expr = Notes_IndentFoldExpr(a:lnum, line)
+  endif
+  return expr
+endfunc
+
+function! Notes_HeadersFoldExpr(lnum, line)
+  let level = strlen(matchstr(a:line, '\v^#+'))
   if level > 0
     return ">" . level
   else
@@ -46,8 +59,35 @@ function! Notes_FoldExpr(lnum)
   endif
 endfunc
 
+function! Notes_IndentFoldExpr(lnum, line)
+  let expr = '='
+  let level = strlen(matchstr(a:line, '\v^ *'))
+  if a:lnum < line('$')
+    let next_line = getline(a:lnum + 1)
+    let next_level = strlen(matchstr(next_line, '\v^ *'))
+    if next_level > level
+      let expr = 'a' . (next_level - level) / &tabstop
+    elseif level > next_level
+      let expr = 's' . (level - next_level) / &tabstop
+    endif
+  endif
+  return expr
+endfunc
+
+function! Notes_FoldText(foldstart)
+  let line = getline(a:foldstart)
+  echo line
+  if line =~ '\v^#'
+    let length = g:notes_header_fold_length - 1 - strlen(line)
+    if length > 0
+      let line = line . ' ' . repeat('-', length)
+    endif
+  endif
+  return line
+endfunc
+
 function! Notes_ShowTodos()
-  vimgrep '\v(^#|TODO)' %
+  vimgrep '\v(^#[^#]|TODO)' %
   copen
 endfunc
 
