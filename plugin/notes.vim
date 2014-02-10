@@ -11,7 +11,7 @@ if !exists("g:notes_execute_command")
 endif
 
 if !exists("g:notes_header_fold_length")
-  let g:notes_header_fold_length = 80
+  let g:notes_header_fold_length = [0, 80, 70, 60, 60, 60, 60]
 endif
 
 
@@ -95,9 +95,9 @@ endfunc
 
 function! Notes_FoldText(foldstart)
   let line = getline(a:foldstart)
-  echo line
-  if line =~ '\v^#'
-    let length = g:notes_header_fold_length - 1 - strlen(line)
+  let level = strlen(matchstr(line, '\v^#+'))
+  if level > 0
+    let length = g:notes_header_fold_length[level] - 1 - strlen(line)
     if length > 0
       let line = line . ' ' . repeat('-', length)
     endif
