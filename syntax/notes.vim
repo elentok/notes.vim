@@ -15,8 +15,8 @@ hi def link notesLine Function
 hi def link notesCommand Type
 hi def link notesLink helpHyperTextJump
 
-syn match notesTask "TODO.*" contains=notesContext,notesLink
-syn match notesCompleteTask "DONE.*" contains=notesContext,notesLink
+syn match notesTask "☐.*" contains=notesContext,notesLink
+syn match notesCompleteTask "✔.*" contains=notesContext,notesLink
 syn match notesContext "@[^ ]*"
 syn match notesLine "^----*"
 syn match notesLink "\vhttps?:[^ ]+"

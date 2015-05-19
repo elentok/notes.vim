@@ -17,12 +17,12 @@ endif
 
 function! Notes_ToggleComplete()
   let line = getline('.')
-  if line =~ "DONE"
-    s/DONE/TODO/
-    s/ *(AT:.*$//
-  elseif line =~ "TODO"
-    s/TODO/DONE/
-    let text = " (AT: " . strftime("%Y-%m-%d %H:%M") .")"
+  if line =~ "^ *✔"
+    s/^\( *\)✔/\1☐/
+    s/ *(at: .*$//
+  elseif line =~ "^ *☐"
+    s/^\( *\)☐/\1✔/
+    let text = " (at: " . strftime("%Y-%m-%d %H:%M") .")"
     exec "normal A" . text
     normal _
   endif
@@ -30,12 +30,12 @@ endfunc
 
 function! Notes_ToggleCancel()
   let line = getline('.')
-  if line =~ "CANCELLED"
-    s/CANCELLED/TODO/
-    s/ *(AT:.*$//
-  elseif line =~ "TODO"
-    s/TODO/CANCELLED/
-    let text = " (AT: " . strftime("%Y-%m-%d %H:%M") .")"
+  if line =~ "^ *✘"
+    s/^\( *\)✘/\1☐/
+    s/ *(at: .*$//
+  elseif line =~ "^ *☐"
+    s/^\( *\)☐/\1✘/
+    let text = " (at: " . strftime("%Y-%m-%d %H:%M") .")"
     exec "normal A" . text
     normal _
   endif
@@ -106,7 +106,7 @@ function! Notes_FoldText(foldstart)
 endfunc
 
 function! Notes_ShowTodos()
-  vimgrep '\v(^#[^#]|TODO)' %
+  vimgrep '\v(^#[^#]|☐)' %
   copen
 endfunc
 

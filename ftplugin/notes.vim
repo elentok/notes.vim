@@ -15,6 +15,8 @@ nnoremap <buffer> <leader>nn :call Notes_ExecuteLine()<cr>
 nnoremap <buffer> ✠ :call Notes_ExecuteLine()<cr>
 nnoremap <buffer> Ω :call Notes_ToggleComplete()<cr>
 
+inoremap <buffer> Ω ☐ 
+
 " when pressing enter within a task it creates another task
-setlocal comments+=n:TODO
+setlocal comments+=n:☐
 setlocal foldexpr=Notes_FoldExpr(v:lnum) foldtext=Notes_FoldText(v:foldstart) foldmethod=expr
