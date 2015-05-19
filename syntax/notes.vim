@@ -13,10 +13,10 @@ hi def link notesCompleteTask Comment
 hi def link notesContext Question
 hi def link notesLine Function
 hi def link notesCommand Type
-hi def link notesLink helpHyperTextJump
+hi def link notesLink PreProc
 
-syn match notesTask "☐.*" contains=notesContext,notesLink
-syn match notesCompleteTask "✔.*" contains=notesContext,notesLink
+syn match notesTask "^\s*☐"
+syn match notesCompleteTask "✔.*"
 syn match notesContext "@[^ ]*"
 syn match notesLine "^----*"
 syn match notesLink "\vhttps?:[^ ]+"
